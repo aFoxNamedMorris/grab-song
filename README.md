@@ -37,7 +37,7 @@ A utility is included which will list the available players' arguments, so you d
 watch -t ./check-media-players.sh
 ```
 
-
+### Setting up OBS:
 In OBS, add the necessary text and/or image sources, and point them to their respective files in the 'Output' subdirectory. OBS will automatically reload the sources each time grab-song.sh updates them.
 
 ## Contributing:
