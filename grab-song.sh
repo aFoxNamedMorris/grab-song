@@ -30,7 +30,7 @@ rm -rf Temp/*
 exit
 }
 
-#TODO: Remove remove in-built debug output. (LOW PRIORITY)
+#TODO: Make verbosity optional.
 printf "================================\n"
 
 while [ $STREAMING = true ]; do
@@ -56,7 +56,7 @@ cat $SONG_METADATA | grep "xesam:title:" | sed 's/xesam:title: //' > $SONG_TITLE
 cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //' > $SONG_ARTIST
 cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //' > $SONG_ALBUM
 
-#Debug stuff:
+#Verbosity:
 printf "Title: "
 cat $SONG_TITLE
 printf "\n"
