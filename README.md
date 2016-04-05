@@ -40,5 +40,5 @@ watch -t ./check-media-players.sh
 ### Setting up OBS:
 In OBS, add the necessary text and/or image sources, and point them to their respective files in the 'Output' subdirectory. OBS will automatically reload the sources each time grab-song.sh updates them.
 
-## Contributing:
+### Contributing:
 If you would like to contribute, please feel free to fork the project on GitHub. https://github.com/aFoxNamedMorris/grab-song
