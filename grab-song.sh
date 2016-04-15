@@ -10,11 +10,6 @@ PLAYER_SELECTION=${1-$(cat $CONFIG_DIR/settings.conf | grep "last-used-player=" 
 
 OUTPUT_DIR=${OUTPUT_DIR-$(cat $CONFIG_DIR/settings.conf | grep "output-directory=" | sed 's/output-directory=//')}
 
-if [ ! -f $CONFIG_DIR/settings.conf ]; then
-    echo "last-used-player=" >> $CONFIG_DIR/settings.conf
-    echo "output-directory=$OUTPUT_DIR" >> $CONFIG_DIR/settings.conf
-fi
-
 #TODO: Add a variable for custom output directory. (IMPORTANT)
 SONG_METADATA="Temp/SongMetaData.txt"
 SONG_TITLE="$OUTPUT_DIR/SongTitle.txt"
@@ -28,6 +23,11 @@ touch $SONG_METADATA
 touch $SONG_TITLE
 touch $SONG_ARTIST
 touch $SONG_ALBUM
+
+if [ ! -f $CONFIG_DIR/settings.conf ]; then
+    echo "last-used-player=" >> $CONFIG_DIR/settings.conf
+    echo "output-directory=$OUTPUT_DIR" >> $CONFIG_DIR/settings.conf
+fi
 
 save_and_clean()
 {
