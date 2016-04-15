@@ -38,7 +38,7 @@ OUTPUT_DIR=<Desired directory>
 ```
 *_Defaults to the "Output" directory._*
 
-Examples:
+### Examples:
 ```
 VERBOSE=true ./grab-song 
 VERBOSE=true ./grab-song pithos
