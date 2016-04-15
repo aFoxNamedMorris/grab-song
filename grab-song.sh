@@ -2,6 +2,8 @@
 
 STREAMING="true"
 
+VERBOSE=${VERBOSE-false}
+
 CONFIG_DIR=${CONFIG_DIR-Config}
 
 PLAYER_SELECTION=${1-$(cat $CONFIG_DIR/settings.conf | grep "last-used-player=" | sed 's/last-used-player=//')} 
@@ -30,8 +32,11 @@ rm -rf Temp/*
 exit
 }
 
-#TODO: Make verbosity optional.
+if [ $VERBOSE = true ]; then
+
 printf "================================\n"
+
+fi
 
 while [ $STREAMING = true ]; do
 (
@@ -57,6 +62,7 @@ cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //' > $SONG_ART
 cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //' > $SONG_ALBUM
 
 #Verbosity:
+if [ $VERBOSE = true ]; then
 printf "Title: "
 cat $SONG_TITLE
 printf "\n"
@@ -70,6 +76,8 @@ cat $SONG_ALBUM
 printf "\r"
 
 printf "================================\n"
+
+fi
 
 )
 fi
