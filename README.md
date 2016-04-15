@@ -33,11 +33,10 @@ The script will remember the last player specified, so it can be run without hav
 VERBOSE=<true/false> 
 ```
 *_Defaults to "false"_*.
-
+```
 OUTPUT_DIR=<Desired directory> 
 ```
 *_Defaults to the "Output" directory._*
-```
 
 Examples:
 ```
