@@ -36,7 +36,7 @@ VERBOSE=<true/false>
 ```
 OUTPUT_DIR=<Desired directory> 
 ```
-*_Defaults to the "Output" directory._*
+*_Defaults to the "Output" subdirectory._*
 
 ### Examples:
 ```
