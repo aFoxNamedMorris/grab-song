@@ -42,8 +42,7 @@ OUTPUT_DIR=<Desired directory>
 ```
 VERBOSE=true ./grab-song 
 VERBOSE=true ./grab-song pithos
-VERBOSE=false OUTPUT_DIR=Output2 ./grab-song
-OUTPUT_DIR=OtherOutput ./grab-song 
+VERBOSE=false OUTPUT_DIR=Output2 ./grab-song 
 ```
 
 A utility is included which will list the available players' arguments, so you don't have to guess. It can also be paired with the 'watch -t' command to give a real(ish)-time update, so as to avoid having to rerun the utility each time a new media player is started. 
