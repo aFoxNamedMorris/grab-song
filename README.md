@@ -30,8 +30,13 @@ Keep in mind that you must have your player of choice running or the script will
 The script will remember the last player specified, so it can be run without having to specify the player each time.
 ### Options:
 ```
-VERBOSE=<true/false> *_Defaults to "false"_*.
-OUTPUT_DIR=<Desired directory> *_Defaults to the "Output" directory._*
+VERBOSE=<true/false> 
+```
+*_Defaults to "false"_*.
+
+OUTPUT_DIR=<Desired directory> 
+```
+*_Defaults to the "Output" directory._*
 ```
 
 Examples:
