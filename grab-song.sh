@@ -1,6 +1,9 @@
 #!/bin/bash
 
-STREAMING="true"
+tput civis
+stty -echo
+
+cd "${0%/*}"
 
 VERBOSE=${VERBOSE-false}
 
@@ -34,16 +37,14 @@ save_and_clean()
 sed -i "/last-used-player=/ c\last-used-player=$PLAYER_SELECTION" $CONFIG_DIR/settings.conf
 sed -i "/output-directory=/ c\output-directory=$OUTPUT_DIR" $CONFIG_DIR/settings.conf
 rm -rf Temp/*
+kill $(jobs -p)
+stty echo
+tput cnorm
+reset
 exit
 }
 
-if [ $VERBOSE = true ]; then
-
-printf "================================\n"
-
-fi
-
-while [ $STREAMING = true ]; do
+while true; do
 (
 
 if [ "$(qdbus org.mpris.MediaPlayer2.$PLAYER_SELECTION /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Metadata)" != "$(cat $SONG_METADATA)" ]; then
@@ -66,25 +67,24 @@ cat $SONG_METADATA | grep "xesam:title:" | sed 's/xesam:title: //' > $SONG_TITLE
 cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //' > $SONG_ARTIST
 cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //' > $SONG_ALBUM
 
-#Verbosity:
-if [ $VERBOSE = true ]; then
-printf "Title: "
-cat $SONG_TITLE
-printf "\n"
-
-printf "Artist: "
-cat $SONG_ARTIST
-printf "\n"
-
-printf "Album: "
-cat $SONG_ALBUM
-printf "\r"
-
-printf "================================\n"
-
+)
 fi
 
-)
+#Verbosity:
+if [ $VERBOSE = true ]; then
+
+tput ed
+tput cup 0 0
+printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
+tput cup 1 0
+printf "$(tput el)Title: $(cat $SONG_METADATA | grep "xesam:title:" | sed 's/xesam:title: //')\n$(tput el)\n$(tput el)"
+
+printf "$(tput el)Artist: $(cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //')\n$(tput el)\n$(tput el)"
+
+printf "$(tput el)Album: $(cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //')\n$(tput el)"
+
+printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
+
 fi
 
 sleep 1
