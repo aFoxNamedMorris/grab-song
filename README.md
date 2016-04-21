@@ -4,7 +4,6 @@
 Requires qdbus and ImageMagick to run.
 Supports any MPRIS enabled media player.
 
-Must (for now) be run from the directory that it's stored in.
 WIP! There are a few bugs, and it is not entirely finished.
 
 Outputs the song title, artist, and album data, as well as the album art to the 'Output' subdirectory.
