@@ -91,6 +91,6 @@ sleep 1
 
 )
 
-trap save_and_clean EXIT INT
+trap save_and_clean EXIT INT TERM
 
 done
