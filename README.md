@@ -31,11 +31,11 @@ The script will remember the last player specified, so it can be run without hav
 ```
 VERBOSE=<true/false> 
 ```
-*_Defaults to "false"_*.
+*_Determines whether or not the song data is displayed in the terminal window. Defaults to "false"_*.
 ```
 OUTPUT_DIR=<Desired directory> 
 ```
-*_Defaults to the "Output" subdirectory._*
+*_Sets the folder where song data gets saved. Defaults to the "Output" subdirectory._*
 
 ### Examples:
 ```
