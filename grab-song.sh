@@ -13,7 +13,6 @@ PLAYER_SELECTION=${1-$(cat $CONFIG_DIR/settings.conf | grep "last-used-player=" 
 
 OUTPUT_DIR=${OUTPUT_DIR-$(cat $CONFIG_DIR/settings.conf | grep "output-directory=" | sed 's/output-directory=//')}
 
-#TODO: Add a variable for custom output directory. (IMPORTANT)
 SONG_METADATA="Temp/SongMetaData.txt"
 SONG_TITLE="$OUTPUT_DIR/SongTitle.txt"
 SONG_ARTIST="$OUTPUT_DIR/SongArtist.txt"
@@ -73,15 +72,15 @@ fi
 #Verbosity:
 if [ $VERBOSE = true ]; then
 
-tput ed
 tput cup 0 0
+tput ed
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
 tput cup 1 0
-printf "$(tput el)Title: $(cat $SONG_METADATA | grep "xesam:title:" | sed 's/xesam:title: //')\n$(tput el)\n$(tput el)"
+printf "Title: $(cat $SONG_METADATA | grep "xesam:title:" | sed 's/xesam:title: //')\n\n"
 
-printf "$(tput el)Artist: $(cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //')\n$(tput el)\n$(tput el)"
+printf "Artist: $(cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //')\n\n"
 
-printf "$(tput el)Album: $(cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //')\n$(tput el)"
+printf "Album: $(cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //')\n"
 
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
 
