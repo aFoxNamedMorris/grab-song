@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 tput civis
 stty -echo
@@ -67,8 +67,8 @@ qdbus org.mpris.MediaPlayer2.$PLAYER_SELECTION /org/mpris/MediaPlayer2 org.mpris
 # If no album art is found, use generic image instead.
 if grep -q "mpris:artUrl:" $SONG_METADATA; then
 
-SONG_ART=$(cat $SONG_METADATA | grep "mpris:artUrl:" | sed 's/mpris:artUrl: //')
-convert $SONG_ART -resize 500x500! $OUTPUT_DIR/AlbumArt.jpg &>/dev/null
+SONG_ART="$(cat $SONG_METADATA | grep "mpris:artUrl:" | sed 's/mpris:artUrl: //' | sed "s/%20/ /g")"
+convert "$SONG_ART" -resize 500x500! $OUTPUT_DIR/AlbumArt.jpg &>/dev/null
 
 else
 
