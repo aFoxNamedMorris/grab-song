@@ -68,3 +68,10 @@ In OBS, add the necessary text and/or image sources, and point them to their res
 
 ### Contributing:
 If you would like to contribute, please feel free to fork the project on GitHub. https://github.com/aFoxNamedMorris/grab-song
+
+### Found a bug? Have a suggestion?
+If you find a bug, something is broken, or you want to suggest a new feature or improvement, you can post it either here:
+https://github.com/aFoxNamedMorris/grab-song/issues
+
+or here, in the 'bugs' or 'suggestions' room, respectively:
+https://discord.gg/0ygznlvzvNXXY1Qt
