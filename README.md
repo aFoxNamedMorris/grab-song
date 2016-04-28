@@ -29,20 +29,30 @@ Keep in mind that you must have your player of choice running or the script will
 The script will remember the last player specified, so it can be run without having to specify the player each time.
 ### Options:
 ```
+ONELINE=<true/false> 
+```
+*_Determines whether or not the song data is saved as multiple individual files, or in a single line in a single file. Default is "false". This value is stored._*
+```
+ONELINER_FORMAT=<format>
+```
+*_Sets the formatting used for when ONELINE is set to 'true'. If set via command line, formatting MUST be enclosed in single quotes. Valid parameters are $t (title), $a (artist), and $i (album), and can be seperated via spaces, other letters and/or symbols. Default is ' $a: $t - $i '. This value is stored._*
+```
 VERBOSE=<true/false> 
 ```
-*_Determines whether or not the song data is displayed in the terminal window. Defaults to "false"_*.
+*_Determines whether or not the song data is displayed in the terminal window. Defaults to "false". This value is NOT stored._*
 ```
 OUTPUT_DIR=<Desired directory> 
 ```
-*_Sets the folder where song data gets saved. Defaults to the "Output" subdirectory._*
+*_Sets the folder where song data gets saved. Default is the "Output" subdirectory. This value is stored._*
 
 ### Examples:
 ```
-VERBOSE=true ./grab-song 
-VERBOSE=true ./grab-song pithos
-VERBOSE=false OUTPUT_DIR=Output2 ./grab-song 
-OUTPUT_DIR=OtherOutput ./grab-song
+VERBOSE=true ./grab-song.sh 
+VERBOSE=true ./grab-song.sh pithos
+VERBOSE=false OUTPUT_DIR=Output2 ./grab-song.sh 
+OUTPUT_DIR=OtherOutput ./grab-song.sh
+VERBOSE=true ONELINE=true ./grab-song.sh
+VERBOSE=true ONELINE=true ONELINER_FORMAT=' $t - $a - $i ' ./grab-song.sh
 ```
 
 A utility is included which will list the available players' arguments, so you don't have to guess. It can also be paired with the 'watch -t' command to give a real(ish)-time update, so as to avoid having to rerun the utility each time a new media player is started. 
