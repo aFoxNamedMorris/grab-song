@@ -11,6 +11,15 @@ ONELINER_FORMAT=' $a: $t - $i '
 OUTPUT_DIR='Output'
 ONELINE=false
 
+mkdir -p $CONFIG_DIR
+if [ ! -f $CONFIG_DIR/settings.conf ]; then
+    echo "verbose=false" >> $CONFIG_DIR/settings.conf
+    echo "last-used-player=" >> $CONFIG_DIR/settings.conf
+    echo "output-directory=$OUTPUT_DIR" >> $CONFIG_DIR/settings.conf
+    echo "oneline=false" >> $CONFIG_DIR/settings.conf
+    echo 'oneliner-format= $a: $t - $i ' >> $CONFIG_DIR/settings.conf
+fi
+
 VERBOSE=${VERBOSE-$(cat $CONFIG_DIR/settings.conf | grep "verbose=" | sed 's/verbose=//')}
 
 PLAYER_SELECTION=${1-$(cat $CONFIG_DIR/settings.conf | grep "last-used-player=" | sed 's/last-used-player=//')} 
@@ -28,21 +37,12 @@ SONG_ONELINER="$OUTPUT_DIR/SongInfo.txt"
 
 mkdir -p Temp
 mkdir -p $OUTPUT_DIR
-mkdir -p $CONFIG_DIR
 touch $SONG_METADATA
 touch $SONG_TITLE
 touch $SONG_ARTIST
 touch $SONG_ALBUM
 # Need to implement a oneliner output, similar to Snip.
 touch $SONG_ONELINER
-
-if [ ! -f $CONFIG_DIR/settings.conf ]; then
-    echo "verbose=false" >> $CONFIG_DIR/settings.conf
-    echo "last-used-player=" >> $CONFIG_DIR/settings.conf
-    echo "output-directory=$OUTPUT_DIR" >> $CONFIG_DIR/settings.conf
-    echo "oneline=false" >> $CONFIG_DIR/settings.conf
-    echo 'oneliner-format= $a: $t - $i ' >> $CONFIG_DIR/settings.conf
-fi
 
 # Define a function for saving the configuration and cleaning up temporary files.
 save_and_clean()
