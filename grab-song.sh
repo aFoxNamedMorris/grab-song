@@ -1,7 +1,4 @@
-#!/bin/sh
-
-tput civis
-stty -echo
+#!/bin/bash
 
 cd "${0%/*}"
 
@@ -11,6 +8,9 @@ CONFIG_DIR=${CONFIG_DIR-Config}
 SETTINGS_FILE="$CONFIG_DIR/settings.conf"
 ONELINER_FORMAT=' $a: $t - $i '
 OUTPUT_DIR='Output'
+
+CURRENT=$(qdbus org.mpris.MediaPlayer2.* | grep "org.mpris.MediaPlayer2." | sed 's/org.mpris.MediaPlayer2.//')
+PLAYERS=(`echo ${CURRENT}`)
 
 mkdir -p $CONFIG_DIR
 if [ ! -f $SETTINGS_FILE ]; then
@@ -33,7 +33,29 @@ ONELINER_FORMAT=${ONELINER_FORMAT-$(cat $SETTINGS_FILE | grep "oneliner-format="
 
 RM_OUTPUT=${RM_OUTPUT-$(cat $SETTINGS_FILE | grep "rm-output=" | sed 's/rm-output=//')}
 
-echo $RM_OUTPUT
+if [ ! $1 ]; then
+    if [ ${#PLAYERS[@]} -gt 1 ]; then
+        i=0
+        echo "There are multiple streams. Please choose which stream to capture:"
+        echo ""
+        for PLAYER in $CURRENT
+        do
+            echo "[$i] $PLAYER"
+            let "i++"
+        done
+        echo ""
+        echo "Select the number you wish to use:"
+        read NUM
+
+        PLAYER_SELECTION=${PLAYERS[$NUM]}
+    fi
+fi
+
+unset CURRENT
+unset PLAYERS
+
+tput civis
+stty -echo
 
 SONG_METADATA="$TMP_DIR/SongMetaData.txt"
 SONG_TITLE="$OUTPUT_DIR/SongTitle.txt"
