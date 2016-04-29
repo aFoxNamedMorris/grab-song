@@ -6,12 +6,11 @@ stty -echo
 cd "${0%/*}"
 
 # Define some defaults.
+TMP_DIR=`mktemp -d /tmp/$0.XXXXXXXXXXX`
 CONFIG_DIR=${CONFIG_DIR-Config}
 SETTINGS_FILE="$CONFIG_DIR/settings.conf"
 ONELINER_FORMAT=' $a: $t - $i '
 OUTPUT_DIR='Output'
-ONELINE=false
-RM_OUTPUT=false
 
 mkdir -p $CONFIG_DIR
 if [ ! -f $SETTINGS_FILE ]; then
@@ -34,13 +33,14 @@ ONELINER_FORMAT=${ONELINER_FORMAT-$(cat $SETTINGS_FILE | grep "oneliner-format="
 
 RM_OUTPUT=${RM_OUTPUT-$(cat $SETTINGS_FILE | grep "rm-output=" | sed 's/rm-output=//')}
 
-SONG_METADATA="Temp/SongMetaData.txt"
+echo $RM_OUTPUT
+
+SONG_METADATA="$TMP_DIR/SongMetaData.txt"
 SONG_TITLE="$OUTPUT_DIR/SongTitle.txt"
 SONG_ARTIST="$OUTPUT_DIR/SongArtist.txt"
 SONG_ALBUM="$OUTPUT_DIR/SongAlbum.txt"
 SONG_ONELINER="$OUTPUT_DIR/SongInfo.txt"
 
-mkdir -p Temp
 mkdir -p $OUTPUT_DIR
 touch $SONG_METADATA
 touch $SONG_TITLE
@@ -86,15 +86,18 @@ unset TEST_RM_OUTPUT
 # Define a function for cleaning up temporary files.
 save_and_clean()
 {
-rm -rf Temp/
+
 sed -i "/verbose=/ c\verbose=$VERBOSE" $SETTINGS_FILE
 sed -i "/last-used-player=/ c\last-used-player=$PLAYER_SELECTION" $SETTINGS_FILE
 sed -i "/output-directory=/ c\output-directory=$OUTPUT_DIR" $SETTINGS_FILE
 sed -i "/oneline=/ c\oneline=$ONELINE" $SETTINGS_FILE
 sed -i "/oneliner-format=/ c\oneliner-format=$ONELINER_FORMAT" $SETTINGS_FILE
 sed -i "/rm-output=/ c\rm-output=$RM_OUTPUT" $SETTINGS_FILE
+
+rm -r $TMP_DIR
+
 if $RM_OUTPUT; then
-rm -rf $OUTPUT_DIR
+rm -r $OUTPUT_DIR
 fi
 kill $(jobs -p)
 stty echo
