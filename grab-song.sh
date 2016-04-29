@@ -5,7 +5,11 @@ stty -echo
 
 cd "${0%/*}"
 
+# Define some defaults.
 CONFIG_DIR=${CONFIG_DIR-Config}
+ONELINER_FORMAT=' $a: $t - $i '
+OUTPUT_DIR='Output'
+ONELINE=false
 
 VERBOSE=${VERBOSE-$(cat $CONFIG_DIR/settings.conf | grep "verbose=" | sed 's/verbose=//')}
 
@@ -37,7 +41,7 @@ if [ ! -f $CONFIG_DIR/settings.conf ]; then
     echo "last-used-player=" >> $CONFIG_DIR/settings.conf
     echo "output-directory=$OUTPUT_DIR" >> $CONFIG_DIR/settings.conf
     echo "oneline=false" >> $CONFIG_DIR/settings.conf
-    echo "oneliner-format= $a: $t - $i " >> $CONFIG_DIR/settings.conf
+    echo 'oneliner-format= $a: $t - $i ' >> $CONFIG_DIR/settings.conf
 fi
 
 # Define a function for saving the configuration and cleaning up temporary files.
