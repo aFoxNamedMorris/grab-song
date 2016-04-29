@@ -33,6 +33,7 @@ touch $SONG_ALBUM
 touch $SONG_ONELINER
 
 if [ ! -f $CONFIG_DIR/settings.conf ]; then
+    echo "verbose=false" >> $CONFIG_DIR/settings.conf
     echo "last-used-player=" >> $CONFIG_DIR/settings.conf
     echo "output-directory=$OUTPUT_DIR" >> $CONFIG_DIR/settings.conf
     echo "oneline=false" >> $CONFIG_DIR/settings.conf
@@ -42,6 +43,7 @@ fi
 # Define a function for saving the configuration and cleaning up temporary files.
 save_and_clean()
 {
+sed -i "/verbose=/ c\verbose=$VERBOSE" $CONFIG_DIR/settings.conf
 sed -i "/last-used-player=/ c\last-used-player=$PLAYER_SELECTION" $CONFIG_DIR/settings.conf
 sed -i "/output-directory=/ c\output-directory=$OUTPUT_DIR" $CONFIG_DIR/settings.conf
 sed -i "/oneline=/ c\oneline=$ONELINE" $CONFIG_DIR/settings.conf
