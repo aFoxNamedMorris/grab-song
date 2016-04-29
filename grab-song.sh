@@ -46,7 +46,6 @@ touch $SONG_METADATA
 touch $SONG_TITLE
 touch $SONG_ARTIST
 touch $SONG_ALBUM
-# Need to implement a oneliner output, similar to Snip.
 touch $SONG_ONELINER
 
 # Test to make sure everything is present in the settings file.
