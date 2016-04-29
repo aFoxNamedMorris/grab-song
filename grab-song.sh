@@ -5,7 +5,22 @@ stty -echo
 
 cd "${0%/*}"
 
+# Define some defaults.
 CONFIG_DIR=${CONFIG_DIR-Config}
+ONELINER_FORMAT=' $a: $t - $i '
+OUTPUT_DIR='Output'
+ONELINE=false
+RM_OUTPUT=false
+
+mkdir -p $CONFIG_DIR
+if [ ! -f $CONFIG_DIR/settings.conf ]; then
+    echo "verbose=false" >> $CONFIG_DIR/settings.conf
+    echo "last-used-player=" >> $CONFIG_DIR/settings.conf
+    echo "output-directory=$OUTPUT_DIR" >> $CONFIG_DIR/settings.conf
+    echo "oneline=false" >> $CONFIG_DIR/settings.conf
+    echo 'oneliner-format= $a: $t - $i ' >> $CONFIG_DIR/settings.conf
+    echo "rm-output=$RM_OUTPUT" >> $CONFIG_DIR/settings.conf
+fi
 
 VERBOSE=${VERBOSE-$(cat $CONFIG_DIR/settings.conf | grep "verbose=" | sed 's/verbose=//')}
 
@@ -16,6 +31,8 @@ OUTPUT_DIR=${OUTPUT_DIR-$(cat $CONFIG_DIR/settings.conf | grep "output-directory
 ONELINE=${ONELINE-$(cat $CONFIG_DIR/settings.conf | grep "oneline=" | sed 's/oneline=//')}
 ONELINER_FORMAT=${ONELINER_FORMAT-$(cat $CONFIG_DIR/settings.conf | grep "oneliner-format=" | sed 's/oneliner-format=//')}
 
+RM_OUTPUT=${RM_OUTPUT-$(cat $CONFIG_DIR/settings.conf | grep "rm-output=" | sed 's/rm-output=//')}
+
 SONG_METADATA="Temp/SongMetaData.txt"
 SONG_TITLE="$OUTPUT_DIR/SongTitle.txt"
 SONG_ARTIST="$OUTPUT_DIR/SongArtist.txt"
@@ -24,21 +41,12 @@ SONG_ONELINER="$OUTPUT_DIR/SongInfo.txt"
 
 mkdir -p Temp
 mkdir -p $OUTPUT_DIR
-mkdir -p $CONFIG_DIR
 touch $SONG_METADATA
 touch $SONG_TITLE
 touch $SONG_ARTIST
 touch $SONG_ALBUM
 # Need to implement a oneliner output, similar to Snip.
 touch $SONG_ONELINER
-
-if [ ! -f $CONFIG_DIR/settings.conf ]; then
-    echo "verbose=false" >> $CONFIG_DIR/settings.conf
-    echo "last-used-player=" >> $CONFIG_DIR/settings.conf
-    echo "output-directory=$OUTPUT_DIR" >> $CONFIG_DIR/settings.conf
-    echo "oneline=false" >> $CONFIG_DIR/settings.conf
-    echo "oneliner-format= $a: $t - $i " >> $CONFIG_DIR/settings.conf
-fi
 
 # Define a function for saving the configuration and cleaning up temporary files.
 save_and_clean()
@@ -48,7 +56,12 @@ sed -i "/last-used-player=/ c\last-used-player=$PLAYER_SELECTION" $CONFIG_DIR/se
 sed -i "/output-directory=/ c\output-directory=$OUTPUT_DIR" $CONFIG_DIR/settings.conf
 sed -i "/oneline=/ c\oneline=$ONELINE" $CONFIG_DIR/settings.conf
 sed -i "/oneliner-format=/ c\oneliner-format=$ONELINER_FORMAT" $CONFIG_DIR/settings.conf
-rm -rf Temp/*
+sed -i "/rm-output=/ c\rm-output=$RM_OUTPUT" $CONFIG_DIR/settings.conf
+rm -rf Temp/
+
+if $RM_OUTPUT; then
+rm -rf $OUTPUT_DIR
+fi
 kill $(jobs -p)
 stty echo
 tput cnorm
