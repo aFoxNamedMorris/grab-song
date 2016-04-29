@@ -7,31 +7,32 @@ cd "${0%/*}"
 
 # Define some defaults.
 CONFIG_DIR=${CONFIG_DIR-Config}
+SETTINGS_FILE="$CONFIG_DIR/settings.conf"
 ONELINER_FORMAT=' $a: $t - $i '
 OUTPUT_DIR='Output'
 ONELINE=false
 RM_OUTPUT=false
 
 mkdir -p $CONFIG_DIR
-if [ ! -f $CONFIG_DIR/settings.conf ]; then
-    echo "verbose=false" >> $CONFIG_DIR/settings.conf
-    echo "last-used-player=" >> $CONFIG_DIR/settings.conf
-    echo "output-directory=$OUTPUT_DIR" >> $CONFIG_DIR/settings.conf
-    echo "oneline=false" >> $CONFIG_DIR/settings.conf
-    echo 'oneliner-format= $a: $t - $i ' >> $CONFIG_DIR/settings.conf
-    echo "rm-output=$RM_OUTPUT" >> $CONFIG_DIR/settings.conf
+if [ ! -f $SETTINGS_FILE ]; then
+    echo "verbose=false" >> $SETTINGS_FILE
+    echo "last-used-player=" >> $SETTINGS_FILE
+    echo "output-directory=$OUTPUT_DIR" >> $SETTINGS_FILE
+    echo "oneline=false" >> $SETTINGS_FILE
+    echo 'oneliner-format= $a: $t - $i ' >> $SETTINGS_FILE
+    echo "rm-output=$RM_OUTPUT" >> $SETTINGS_FILE
 fi
 
-VERBOSE=${VERBOSE-$(cat $CONFIG_DIR/settings.conf | grep "verbose=" | sed 's/verbose=//')}
+VERBOSE=${VERBOSE-$(cat $SETTINGS_FILE | grep "verbose=" | sed 's/verbose=//')}
 
-PLAYER_SELECTION=${1-$(cat $CONFIG_DIR/settings.conf | grep "last-used-player=" | sed 's/last-used-player=//')} 
+PLAYER_SELECTION=${1-$(cat $SETTINGS_FILE | grep "last-used-player=" | sed 's/last-used-player=//')}
 
-OUTPUT_DIR=${OUTPUT_DIR-$(cat $CONFIG_DIR/settings.conf | grep "output-directory=" | sed 's/output-directory=//')}
+OUTPUT_DIR=${OUTPUT_DIR-$(cat $SETTINGS_FILE | grep "output-directory=" | sed 's/output-directory=//')}
 
-ONELINE=${ONELINE-$(cat $CONFIG_DIR/settings.conf | grep "oneline=" | sed 's/oneline=//')}
-ONELINER_FORMAT=${ONELINER_FORMAT-$(cat $CONFIG_DIR/settings.conf | grep "oneliner-format=" | sed 's/oneliner-format=//')}
+ONELINE=${ONELINE-$(cat $SETTINGS_FILE | grep "oneline=" | sed 's/oneline=//')}
+ONELINER_FORMAT=${ONELINER_FORMAT-$(cat $SETTINGS_FILE | grep "oneliner-format=" | sed 's/oneliner-format=//')}
 
-RM_OUTPUT=${RM_OUTPUT-$(cat $CONFIG_DIR/settings.conf | grep "rm-output=" | sed 's/rm-output=//')}
+RM_OUTPUT=${RM_OUTPUT-$(cat $SETTINGS_FILE | grep "rm-output=" | sed 's/rm-output=//')}
 
 SONG_METADATA="Temp/SongMetaData.txt"
 SONG_TITLE="$OUTPUT_DIR/SongTitle.txt"
@@ -48,17 +49,51 @@ touch $SONG_ALBUM
 # Need to implement a oneliner output, similar to Snip.
 touch $SONG_ONELINER
 
-# Define a function for saving the configuration and cleaning up temporary files.
+# Test to make sure everything is present in the settings file.
+TEST_VERBOSE=$(cat $SETTINGS_FILE | grep "verbose=")
+TEST_PLAYER_SELECTION=$(cat $SETTINGS_FILE | grep "last-used-player=")
+TEST_OUTPUT_DIR=$(cat $SETTINGS_FILE | grep "output-directory=")
+TEST_ONELINE=$(cat $SETTINGS_FILE | grep "oneline=")
+TEST_ONELINER_FORMAT=$(cat $SETTINGS_FILE | grep "oneliner-format=")
+TEST_RM_OUTPUT=$(cat $SETTINGS_FILE | grep "rm-output=")
+
+if [ "$TEST_VERBOSE" = "" ]; then
+echo "verbose=$VERBOSE" >> $SETTINGS_FILE
+fi
+if [ "$TEST_PLAYER_SELECTION" = "" ]; then
+echo "last-used-player=$PLAYER_SELECTION" >> $SETTINGS_FILE
+fi
+if [ "$TEST_OUTPUT_DIR" = "" ]; then
+echo "output-directory=$OUTPUT_DIR" >> $SETTINGS_FILE
+fi
+if [ "$TEST_ONELINE" = "" ]; then
+echo "oneline=$ONELINE" >> $SETTINGS_FILE
+fi
+if [ "$TEST_ONELINER_FORMAT" = "" ]; then
+echo "oneliner-format=$ONELINER_FORMAT" >> $SETTINGS_FILE
+fi
+if [ "$TEST_RM_OUTPUT" = "" ]; then
+echo "rm-output=$RM_OUTPUT" >> $SETTINGS_FILE
+fi
+
+# Clean up validation variables
+unset TEST_VERBOSE
+unset TEST_PLAYER_SELECTION
+unset TEST_OUTPUT_DIR
+unset TEST_ONELINE
+unset TEST_ONELINER_FORMAT
+unset TEST_RM_OUTPUT
+
+# Define a function for cleaning up temporary files.
 save_and_clean()
 {
-sed -i "/verbose=/ c\verbose=$VERBOSE" $CONFIG_DIR/settings.conf
-sed -i "/last-used-player=/ c\last-used-player=$PLAYER_SELECTION" $CONFIG_DIR/settings.conf
-sed -i "/output-directory=/ c\output-directory=$OUTPUT_DIR" $CONFIG_DIR/settings.conf
-sed -i "/oneline=/ c\oneline=$ONELINE" $CONFIG_DIR/settings.conf
-sed -i "/oneliner-format=/ c\oneliner-format=$ONELINER_FORMAT" $CONFIG_DIR/settings.conf
-sed -i "/rm-output=/ c\rm-output=$RM_OUTPUT" $CONFIG_DIR/settings.conf
 rm -rf Temp/
-
+sed -i "/verbose=/ c\verbose=$VERBOSE" $SETTINGS_FILE
+sed -i "/last-used-player=/ c\last-used-player=$PLAYER_SELECTION" $SETTINGS_FILE
+sed -i "/output-directory=/ c\output-directory=$OUTPUT_DIR" $SETTINGS_FILE
+sed -i "/oneline=/ c\oneline=$ONELINE" $SETTINGS_FILE
+sed -i "/oneliner-format=/ c\oneliner-format=$ONELINER_FORMAT" $SETTINGS_FILE
+sed -i "/rm-output=/ c\rm-output=$RM_OUTPUT" $SETTINGS_FILE
 if $RM_OUTPUT; then
 rm -rf $OUTPUT_DIR
 fi
