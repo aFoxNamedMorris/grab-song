@@ -5,9 +5,9 @@ stty -echo
 
 cd "${0%/*}"
 
-VERBOSE=${VERBOSE-false}
-
 CONFIG_DIR=${CONFIG_DIR-Config}
+
+VERBOSE=${VERBOSE-$(cat $CONFIG_DIR/settings.conf | grep "verbose=" | sed 's/verbose=//')}
 
 PLAYER_SELECTION=${1-$(cat $CONFIG_DIR/settings.conf | grep "last-used-player=" | sed 's/last-used-player=//')} 
 
