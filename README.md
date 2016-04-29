@@ -39,7 +39,7 @@ ONELINER_FORMAT=<format>
 ```
 VERBOSE=<true/false> 
 ```
-*_Determines whether or not the song data is displayed in the terminal window. Defaults to "false". This value is NOT stored._*
+*_Determines whether or not the song data is displayed in the terminal window. Defaults to "false". This value is stored._*
 ```
 OUTPUT_DIR=<Desired directory> 
 ```
