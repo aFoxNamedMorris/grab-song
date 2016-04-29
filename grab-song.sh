@@ -33,20 +33,22 @@ ONELINER_FORMAT=${ONELINER_FORMAT-$(cat $SETTINGS_FILE | grep "oneliner-format="
 
 RM_OUTPUT=${RM_OUTPUT-$(cat $SETTINGS_FILE | grep "rm-output=" | sed 's/rm-output=//')}
 
-if [ ${#PLAYERS[@]} -gt 1 ]; then
-    i=0
-    echo "There are multiple streams. Please choose which stream to capture:"
-    echo ""
-    for PLAYER in $CURRENT
-    do
-        echo "[$i] $PLAYER"
-        let "i++"
-    done
-    echo ""
-    echo "Select the number you wish to use:"
-    read NUM
+if [ ! $1 ]; then
+    if [ ${#PLAYERS[@]} -gt 1 ]; then
+        i=0
+        echo "There are multiple streams. Please choose which stream to capture:"
+        echo ""
+        for PLAYER in $CURRENT
+        do
+            echo "[$i] $PLAYER"
+            let "i++"
+        done
+        echo ""
+        echo "Select the number you wish to use:"
+        read NUM
 
-    PLAYER_SELECTION=${PLAYERS[$NUM]}
+        PLAYER_SELECTION=${PLAYERS[$NUM]}
+    fi
 fi
 
 unset CURRENT
