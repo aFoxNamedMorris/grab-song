@@ -38,6 +38,6 @@ done
 tput cup 0 0
 tput ed
 
-printf "\nYou have selected $(printf "$MENU_STRING" | sed -n "$(($SELECTION_LINE+1)){p;q}")\n"
+printf "You have selected $(printf "$MENU_STRING" | sed -n "$(($SELECTION_LINE+1)){p;q}")"
 
 '
