@@ -19,7 +19,7 @@ MENU_PROPER_NAME=$(
 
 while [ "$ENUM_TIC" < "$ENUM_MAX" ]; do
 
-printf "$(qdbus org.mpris.MediaPlayer2.$(printf "$MENU_STRING" | sed -n "$ENUM_TIC{p;q}")  /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Identity | sed -e "s#^#$(if [ "$SELECTION_LINE" = "0" ]; then tput rev; else tput sgr0; fi)#")\n"
+printf "$(qdbus org.mpris.MediaPlayer2.$(printf "$MENU_STRING" | sed -n "$ENUM_TIC{p;q}")  /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Identity | sed -e "s#^#$(if [ "$SELECTION_LINE" = "$ENUM_TIC" ]; then tput rev; else tput sgr0; fi)#")\n"
 ((ENUM_TIC++))
 
 done
