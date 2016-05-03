@@ -10,11 +10,25 @@ arrowright="\[C"
 
 SUCCESS=0
 
-MENU_STRING=$(printf "Item1.\nItem2.\nItem3.\nItem4.\nItem5.\n")
+MENU_STRING=$(qdbus org.mpris.MediaPlayer2.* | grep "org.mpris.MediaPlayer2." | sed 's/org.mpris.MediaPlayer2.//')
+
+ENUM_TIC=1
+ENUM_MAX=$(printf "$MENU_STRING" | wc -w)
+
+MENU_PROPER_NAME=$(
+
+while [ "$ENUM_TIC" < "$ENUM_MAX" ]; do
+
+printf "$(qdbus org.mpris.MediaPlayer2.$(printf "$MENU_STRING" | sed -n "$ENUM_TIC{p;q}")  /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Identity | sed -e "s#^#$(if [ "$SELECTION_LINE" = "0" ]; then tput rev; else tput sgr0; fi)#")\n"
+((ENUM_TIC++))
+
+done
+
+)
 
 while true; do
 
-printf "$(tput cup 0 0)$(tput ed)$(if [ "$SELECTION_LINE" = "0" ]; then tput rev; else tput sgr0; fi)Item1.\n$(if [ "$SELECTION_LINE" = "1" ]; then tput rev; else tput sgr0; fi)Item2.\n$(if [ "$SELECTION_LINE" = "2" ]; then tput rev; else tput sgr0; fi)Item3.\n$(if [ "$SELECTION_LINE" = "3" ]; then tput rev; else tput sgr0; fi)Item4.\n$(if [ "$SELECTION_LINE" = "4" ]; then tput rev; else tput sgr0; fi)Item5.\n\n$(tput sgr0)"
+printf "$(tput cup 0 0)$(tput ed)$MENU_PROPER_NAME"
     
 read -rsn3 input
 
@@ -38,6 +52,6 @@ done
 tput cup 0 0
 tput ed
 
-printf "You have selected $(printf "$MENU_STRING" | sed -n "$(($SELECTION_LINE+1)){p;q}")"
+printf "$(printf "$MENU_STRING" | sed -n "$(($SELECTION_LINE+1)){p;q}")\n"
 
 '
