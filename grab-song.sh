@@ -32,7 +32,7 @@ ONELINER_FORMAT=${ONELINER_FORMAT-$(cat $SETTINGS_FILE | grep "oneliner-format="
 
 RM_OUTPUT=${RM_OUTPUT-$(cat $SETTINGS_FILE | grep "rm-output=" | sed 's/rm-output=//')}
 
-printf $RM_OUTPUT
+printf "$RM_OUTPUT"
 
 SONG_METADATA="$TMP_DIR/SongMetaData.txt"
 SONG_TITLE="$OUTPUT_DIR/SongTitle.txt"
