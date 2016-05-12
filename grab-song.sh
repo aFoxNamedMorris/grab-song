@@ -3,8 +3,6 @@
 tput civis
 stty -echo
 
-cd "${0%/*}"
-
 # Define some defaults.
 TMP_DIR=`mktemp -d /tmp/$0.XXXXXXXXXXX`
 CONFIG_DIR=${CONFIG_DIR-Config}
@@ -14,14 +12,15 @@ OUTPUT_DIR='Output'
 
 mkdir -p $CONFIG_DIR
 if [ ! -f $SETTINGS_FILE ]; then
-    echo "verbose=false" >> $SETTINGS_FILE
-    echo "last-used-player=" >> $SETTINGS_FILE
-    echo "output-directory=$OUTPUT_DIR" >> $SETTINGS_FILE
-    echo "oneline=false" >> $SETTINGS_FILE
-    echo 'oneliner-format= $a: $t - $i ' >> $SETTINGS_FILE
-    echo "rm-output=$RM_OUTPUT" >> $SETTINGS_FILE
+    printf "verbose=false" >> $SETTINGS_FILE
+    printf "last-used-player=" >> $SETTINGS_FILE
+    printf "output-directory=$OUTPUT_DIR" >> $SETTINGS_FILE
+    printf "oneline=false" >> $SETTINGS_FILE
+    printf 'oneliner-format= $a: $t - $i ' >> $SETTINGS_FILE
+    printf "rm-output=$RM_OUTPUT" >> $SETTINGS_FILE
 fi
 
+# Load stored settings.
 VERBOSE=${VERBOSE-$(cat $SETTINGS_FILE | grep "verbose=" | sed 's/verbose=//')}
 
 PLAYER_SELECTION=${1-$(cat $SETTINGS_FILE | grep "last-used-player=" | sed 's/last-used-player=//')}
@@ -33,7 +32,7 @@ ONELINER_FORMAT=${ONELINER_FORMAT-$(cat $SETTINGS_FILE | grep "oneliner-format="
 
 RM_OUTPUT=${RM_OUTPUT-$(cat $SETTINGS_FILE | grep "rm-output=" | sed 's/rm-output=//')}
 
-echo $RM_OUTPUT
+printf $RM_OUTPUT
 
 SONG_METADATA="$TMP_DIR/SongMetaData.txt"
 SONG_TITLE="$OUTPUT_DIR/SongTitle.txt"
@@ -41,6 +40,7 @@ SONG_ARTIST="$OUTPUT_DIR/SongArtist.txt"
 SONG_ALBUM="$OUTPUT_DIR/SongAlbum.txt"
 SONG_ONELINER="$OUTPUT_DIR/SongInfo.txt"
 
+# Set up the locations of the output files.
 mkdir -p $OUTPUT_DIR
 touch $SONG_METADATA
 touch $SONG_TITLE
@@ -57,22 +57,22 @@ TEST_ONELINER_FORMAT=$(cat $SETTINGS_FILE | grep "oneliner-format=")
 TEST_RM_OUTPUT=$(cat $SETTINGS_FILE | grep "rm-output=")
 
 if [ "$TEST_VERBOSE" = "" ]; then
-echo "verbose=$VERBOSE" >> $SETTINGS_FILE
+printf "verbose=$VERBOSE" >> $SETTINGS_FILE
 fi
 if [ "$TEST_PLAYER_SELECTION" = "" ]; then
-echo "last-used-player=$PLAYER_SELECTION" >> $SETTINGS_FILE
+printf "last-used-player=$PLAYER_SELECTION" >> $SETTINGS_FILE
 fi
 if [ "$TEST_OUTPUT_DIR" = "" ]; then
-echo "output-directory=$OUTPUT_DIR" >> $SETTINGS_FILE
+printf "output-directory=$OUTPUT_DIR" >> $SETTINGS_FILE
 fi
 if [ "$TEST_ONELINE" = "" ]; then
-echo "oneline=$ONELINE" >> $SETTINGS_FILE
+printf "oneline=$ONELINE" >> $SETTINGS_FILE
 fi
 if [ "$TEST_ONELINER_FORMAT" = "" ]; then
-echo "oneliner-format=$ONELINER_FORMAT" >> $SETTINGS_FILE
+printf "oneliner-format=$ONELINER_FORMAT" >> $SETTINGS_FILE
 fi
 if [ "$TEST_RM_OUTPUT" = "" ]; then
-echo "rm-output=$RM_OUTPUT" >> $SETTINGS_FILE
+printf "rm-output=$RM_OUTPUT" >> $SETTINGS_FILE
 fi
 
 # Clean up validation variables
@@ -108,11 +108,9 @@ exit
 
 # BEGIN MAIN LOOP
 while true; do
-(
 
 # Check for MPRIS data update.
 if [ "$(qdbus org.mpris.MediaPlayer2.$PLAYER_SELECTION /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Metadata)" != "$(cat $SONG_METADATA)" ]; then
-(
 
 qdbus org.mpris.MediaPlayer2.$PLAYER_SELECTION /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Metadata > $SONG_METADATA
 
@@ -127,20 +125,25 @@ else
 convert Images/NoArt.* -resize 500x500! $OUTPUT_DIR/AlbumArt.jpg &>/dev/null
 
 fi
+# Edit the junk out of the MPRIS data.
+SONG_TITLE_VAR="$(cat $SONG_METADATA | grep "xesam:title:" | sed 's/xesam:title: //')"
+SONG_ARTIST_VAR="$(cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //')"
+SONG_ALBUM_VAR="$(cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //')"
+
+t="$SONG_TITLE_VAR"
+a="$SONG_ARTIST_VAR"
+i="$SONG_ALBUM_VAR"
 
 if [ "$ONELINE" = "false" ]; then
-# Edit the junk out of the MPRIS data and save the title, artist, and album data as individual text files.
-cat $SONG_METADATA | grep "xesam:title:" | sed 's/xesam:title: //' > $SONG_TITLE
-cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //' > $SONG_ARTIST
-cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //' > $SONG_ALBUM
+# Save the title, artist, and album data as individual text files.
+printf "$SONG_TITLE_VAR" > $SONG_TITLE
+printf "$SONG_ARTIST_VAR" > $SONG_ARTIST
+printf "$SONG_ALBUM_VAR" > $SONG_ALBUM
 else
 # Same as above, except for oneline mode.
-t=$(cat $SONG_METADATA | grep "xesam:title:" | sed 's/xesam:title: //')
-a=$(cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //')
-i=$(cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //')
 printf "$(eval "printf \"$ONELINER_FORMAT\"")" > $SONG_ONELINER
 fi
-)
+
 fi
 
 # Verbosity.
@@ -148,15 +151,16 @@ if [ "$VERBOSE" = "true" ]; then
 
 tput cup 0 0
 tput ed
+
 printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
 
 if [ "$ONELINE" = "false" ]; then
 
-printf "$(tput cup 1 0)Title: $(cat $SONG_METADATA | grep "xesam:title:" | sed 's/xesam:title: //')\n\nArtist: $(cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //')\n\nAlbum: $(cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //')\n"
+printf "Title: $SONG_TITLE_VAR\n\nArtist: $SONG_ARTIST_VAR\n\nAlbum: $SONG_ALBUM_VAR\n"
 
 else
 
-printf "$(tput cup 1 0)$(cat $SONG_ONELINER)\n"
+printf "$(eval "printf \"$ONELINER_FORMAT\"")\n"
 
 fi
 
@@ -165,8 +169,6 @@ printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
 fi
 
 sleep 1
-
-)
 
 # END MAIN LOOP
 
