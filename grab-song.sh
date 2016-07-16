@@ -14,12 +14,12 @@ if [ -z "$OUTPUT_DIR" ]; then OUTPUT_DIR='Output'; fi
 
 mkdir -p $CONFIG_DIR
 if [ ! -f $SETTINGS_FILE ]; then
-    printf "verbose=$VERBOSE" >> $SETTINGS_FILE
-    if [ -z "$PLAYER_SELECTION" ]; then break; else printf "last-used-player=$PLAYER_SELECTION" >> $SETTINGS_FILE; fi
-    printf "output-directory=$OUTPUT_DIR" >> $SETTINGS_FILE
-    printf "oneline=$ONELINE" >> $SETTINGS_FILE
-    printf 'oneliner-format= $a: $t - $i ' >> $SETTINGS_FILE
-    printf "rm-output=$RM_OUTPUT" >> $SETTINGS_FILE
+    printf "verbose=$VERBOSE\n" >> $SETTINGS_FILE
+    if [ -z "$PLAYER_SELECTION\n" ]; then break; else printf "last-used-player=$PLAYER_SELECTION" >> $SETTINGS_FILE; fi
+    printf "output-directory=$OUTPUT_DIR\n" >> $SETTINGS_FILE
+    printf "oneline=$ONELINE\n" >> $SETTINGS_FILE
+    printf 'oneliner-format= $a: $t - $i \n' >> $SETTINGS_FILE
+    printf "rm-output=$RM_OUTPUT\n" >> $SETTINGS_FILE
 fi
 
 # Define a function for cleaning up temporary files.
