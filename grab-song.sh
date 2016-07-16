@@ -4,26 +4,54 @@ tput civis
 stty -echo
 
 # Define some defaults.
-TMP_DIR=`mktemp -d /tmp/$0.XXXXXXXXXXX`
-CONFIG_DIR=${CONFIG_DIR-Config}
-SETTINGS_FILE="$CONFIG_DIR/settings.conf"
-ONELINER_FORMAT=' $a: $t - $i '
-OUTPUT_DIR='Output'
+if [ -z "$TMP_DIR" ]; then TMP_DIR=`mktemp -d /tmp/$0.XXXXXXXXXXX`; fi
+if [ -z "$CONFIG_DIR" ]; then CONFIG_DIR=${CONFIG_DIR-Config}; fi
+if [ -z "$SETTINGS_FILE" ]; then SETTINGS_FILE="$CONFIG_DIR/settings.conf"; fi
+if [ -z "$VERBOSE" ]; then VERBOSE='true'; fi
+if [ -z "$ONELINE" ]; then ONELINE='false'; fi
+if [ -z "$ONELINER_FORMAT" ]; then ONELINER_FORMAT=' $a: $t - $i '; fi
+if [ -z "$OUTPUT_DIR" ]; then OUTPUT_DIR='Output'; fi
 
 mkdir -p $CONFIG_DIR
 if [ ! -f $SETTINGS_FILE ]; then
-    printf "verbose=false" >> $SETTINGS_FILE
-    printf "last-used-player=" >> $SETTINGS_FILE
+    printf "verbose=$VERBOSE" >> $SETTINGS_FILE
+    if [ -z "$PLAYER_SELECTION" ]; then break; else printf "last-used-player=$PLAYER_SELECTION" >> $SETTINGS_FILE; fi
     printf "output-directory=$OUTPUT_DIR" >> $SETTINGS_FILE
-    printf "oneline=false" >> $SETTINGS_FILE
+    printf "oneline=$ONELINE" >> $SETTINGS_FILE
     printf 'oneliner-format= $a: $t - $i ' >> $SETTINGS_FILE
     printf "rm-output=$RM_OUTPUT" >> $SETTINGS_FILE
 fi
+
+# Define a function for cleaning up temporary files.
+save_and_clean()
+{
+
+sed -i "/verbose=/ c\verbose=$VERBOSE" $SETTINGS_FILE
+sed -i "/last-used-player=/ c\last-used-player=$PLAYER_SELECTION" $SETTINGS_FILE
+sed -i "/output-directory=/ c\output-directory=$OUTPUT_DIR" $SETTINGS_FILE
+sed -i "/oneline=/ c\oneline=$ONELINE" $SETTINGS_FILE
+sed -i "/oneliner-format=/ c\oneliner-format=$ONELINER_FORMAT" $SETTINGS_FILE
+sed -i "/rm-output=/ c\rm-output=$RM_OUTPUT" $SETTINGS_FILE
+
+rm -r $TMP_DIR
+
+if $RM_OUTPUT; then
+rm -r $OUTPUT_DIR
+fi
+kill $(jobs -p)
+stty echo
+tput cnorm
+reset
+exit
+}
 
 # Load stored settings.
 VERBOSE=${VERBOSE-$(cat $SETTINGS_FILE | grep "verbose=" | sed 's/verbose=//')}
 
 PLAYER_SELECTION=${1-$(cat $SETTINGS_FILE | grep "last-used-player=" | sed 's/last-used-player=//')}
+
+# Player argument sanity check.
+if [ -z "$PLAYER_SELECTION" ]; then save_and_clean; exit; else break; fi
 
 OUTPUT_DIR=${OUTPUT_DIR-$(cat $SETTINGS_FILE | grep "output-directory=" | sed 's/output-directory=//')}
 
@@ -82,29 +110,6 @@ unset TEST_OUTPUT_DIR
 unset TEST_ONELINE
 unset TEST_ONELINER_FORMAT
 unset TEST_RM_OUTPUT
-
-# Define a function for cleaning up temporary files.
-save_and_clean()
-{
-
-sed -i "/verbose=/ c\verbose=$VERBOSE" $SETTINGS_FILE
-sed -i "/last-used-player=/ c\last-used-player=$PLAYER_SELECTION" $SETTINGS_FILE
-sed -i "/output-directory=/ c\output-directory=$OUTPUT_DIR" $SETTINGS_FILE
-sed -i "/oneline=/ c\oneline=$ONELINE" $SETTINGS_FILE
-sed -i "/oneliner-format=/ c\oneliner-format=$ONELINER_FORMAT" $SETTINGS_FILE
-sed -i "/rm-output=/ c\rm-output=$RM_OUTPUT" $SETTINGS_FILE
-
-rm -r $TMP_DIR
-
-if $RM_OUTPUT; then
-rm -r $OUTPUT_DIR
-fi
-kill $(jobs -p)
-stty echo
-tput cnorm
-reset
-exit 
-}
 
 # BEGIN MAIN LOOP
 while true; do
