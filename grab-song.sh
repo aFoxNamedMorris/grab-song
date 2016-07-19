@@ -6,7 +6,7 @@ stty -echo
 generate_settings()
 {
 printf "verbose=$VERBOSE\n" >> $SETTINGS_FILE
-if [ -z "$PLAYER_SELECTION" ]; then break; else printf "last-used-player=$PLAYER_SELECTION" >> $SETTINGS_FILE; fi
+if [ -z "$PLAYER_SELECTION" ]; then break; else printf "last-used-player=$PLAYER_SELECTION\n" >> $SETTINGS_FILE; fi
 printf "output-directory=$OUTPUT_DIR\n" >> $SETTINGS_FILE
 printf "oneline=$ONELINE\n" >> $SETTINGS_FILE
 printf 'oneliner-format= $a: $t - $i \n' >> $SETTINGS_FILE
@@ -83,22 +83,22 @@ TEST_ONELINER_FORMAT=$(cat $SETTINGS_FILE | grep "oneliner-format=")
 TEST_RM_OUTPUT=$(cat $SETTINGS_FILE | grep "rm-output=")
 
 if [ "$TEST_VERBOSE" = "" ]; then
-printf "verbose=$VERBOSE" >> $SETTINGS_FILE
+printf "verbose=$VERBOSE\n" >> $SETTINGS_FILE
 fi
 if [ "$TEST_PLAYER_SELECTION" = "" ]; then
-printf "last-used-player=$PLAYER_SELECTION" >> $SETTINGS_FILE
+printf "last-used-player=$PLAYER_SELECTION\n" >> $SETTINGS_FILE
 fi
 if [ "$TEST_OUTPUT_DIR" = "" ]; then
-printf "output-directory=$OUTPUT_DIR" >> $SETTINGS_FILE
+printf "output-directory=$OUTPUT_DIR\n" >> $SETTINGS_FILE
 fi
 if [ "$TEST_ONELINE" = "" ]; then
-printf "oneline=$ONELINE" >> $SETTINGS_FILE
+printf "oneline=$ONELINE\n" >> $SETTINGS_FILE
 fi
 if [ "$TEST_ONELINER_FORMAT" = "" ]; then
-printf "oneliner-format=$ONELINER_FORMAT" >> $SETTINGS_FILE
+printf "oneliner-format=$ONELINER_FORMAT\n" >> $SETTINGS_FILE
 fi
 if [ "$TEST_RM_OUTPUT" = "" ]; then
-printf "rm-output=$RM_OUTPUT" >> $SETTINGS_FILE
+printf "rm-output=$RM_OUTPUT\n" >> $SETTINGS_FILE
 fi
 
 # Clean up validation variables
