@@ -65,7 +65,7 @@ if [ -z "$PLAYER_SELECTION" ]; then
   sh check-media-players.sh
   printf "\n"
   exit
-else break; fi
+fi
 
   OUTPUT_DIR=${OUTPUT_DIR-$(cat $SETTINGS_FILE | grep "output-directory=" | sed 's/output-directory=//')}
 
