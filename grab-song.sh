@@ -110,7 +110,7 @@ fi
   unset TEST_RM_OUTPUT
 
   # Set defaults if settings aren't present.
-  if [ "$ONELINER_FORMAT" = "" ]; then ONELINER_FORMAT=' $a: $t - $i '; fi
+  if [ "$ONELINER_FORMAT" = "" ]; then ONELINER_FORMAT=' $SONG_TITLE_VAR: $SONG_ARTIST_VAR - $SONG_ALBUM_VAR '; fi
   if [ "$FIRSTRUN" = "" ]; then FIRSTRUN='true'; fi
   if [ "$VERBOSE" = "" ]; then VERBOSE='true'; fi
   if [ "$ONELINE" = "" ]; then ONELINE='false'; fi
