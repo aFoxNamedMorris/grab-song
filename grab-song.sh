@@ -155,10 +155,6 @@ fi
       SONG_ARTIST_VAR="$(cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //')"
       SONG_ALBUM_VAR="$(cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //')"
 
-      t="$SONG_TITLE_VAR"
-      a="$SONG_ARTIST_VAR"
-      i="$SONG_ALBUM_VAR"
-
       if [ "$ONELINE" = "false" ]; then
         # Save the title, artist, and album data as individual text files.
         printf "$SONG_TITLE_VAR" > $SONG_TITLE
