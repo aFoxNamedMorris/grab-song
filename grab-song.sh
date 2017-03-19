@@ -110,7 +110,7 @@ fi
   unset TEST_RM_OUTPUT
 
   # Set defaults if settings aren't present.
-  if [ "$ONELINER_FORMAT" = "" ]; then ONELINER_FORMAT=' $a: $t - $i '; fi
+  if [ "$ONELINER_FORMAT" = "" ]; then ONELINER_FORMAT=' $SONG_TITLE_VAR: $SONG_ARTIST_VAR - $SONG_ALBUM_VAR '; fi
   if [ "$FIRSTRUN" = "" ]; then FIRSTRUN='true'; fi
   if [ "$VERBOSE" = "" ]; then VERBOSE='true'; fi
   if [ "$ONELINE" = "" ]; then ONELINE='false'; fi
@@ -154,10 +154,6 @@ fi
       SONG_TITLE_VAR="$(cat $SONG_METADATA | grep "xesam:title:" | sed 's/xesam:title: //')"
       SONG_ARTIST_VAR="$(cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //')"
       SONG_ALBUM_VAR="$(cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //')"
-
-      t="$SONG_TITLE_VAR"
-      a="$SONG_ARTIST_VAR"
-      i="$SONG_ALBUM_VAR"
 
       if [ "$ONELINE" = "false" ]; then
         # Save the title, artist, and album data as individual text files.
