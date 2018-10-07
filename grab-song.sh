@@ -151,9 +151,9 @@ fi
 
       fi
       # Edit the junk out of the MPRIS data.
-      SONG_TITLE_VAR="$(cat $SONG_METADATA | grep "xesam:title:" | sed 's/xesam:title: //')"
-      SONG_ARTIST_VAR="$(cat $SONG_METADATA | grep "xesam:artist:" | sed 's/xesam:artist: //')"
-      SONG_ALBUM_VAR="$(cat $SONG_METADATA | grep "xesam:album:" | sed 's/xesam:album: //')"
+      SONG_TITLE_VAR="$(cat $SONG_METADATA | grep "xesam:title:" | sed 's/.*title: //')"
+      SONG_ARTIST_VAR="$(cat $SONG_METADATA | grep "xesam:artist:" | sed 's/.*artist: //')"
+      SONG_ALBUM_VAR="$(cat $SONG_METADATA | grep "xesam:album:" | sed 's/.*album: //')"
 
       t="$SONG_TITLE_VAR"
       a="$SONG_ARTIST_VAR"
@@ -177,11 +177,21 @@ fi
       tput cup 0 0
       tput ed
 
-      printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
+      printf '%*s' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
 
       if [ "$ONELINE" = "false" ]; then
 
-        printf "Title: $SONG_TITLE_VAR\n\nArtist: $SONG_ARTIST_VAR\n\nAlbum: $SONG_ALBUM_VAR\n"
+        if [ "$SONG_TITLE_VAR" != "" ]; then
+          printf "\nTitle: $SONG_TITLE_VAR\n"
+        fi
+
+        if [ "$SONG_ARTIST_VAR" != "" ]; then
+          printf "\nArtist: $SONG_ARTIST_VAR\n"
+        fi
+
+        if [ "$SONG_ALBUM_VAR" != "" ]; then
+          printf "\nAlbum: $SONG_ALBUM_VAR\n"
+        fi
 
       else
 
