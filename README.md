@@ -18,7 +18,7 @@ Keep in mind that you must have your player of choice running or the script will
 
 ### Examples:
 ```
-./grab-song.sh pithos
+./grab-song.sh io.github.Pithos
 ./grab-song.sh audacious
 ./grab-song.sh clementine
 ./grab-song.sh vlc
@@ -51,7 +51,7 @@ RM_OUTPUT=<true/false>
 ### Examples:
 ```
 VERBOSE=true ./grab-song.sh
-VERBOSE=true ./grab-song.sh pithos
+VERBOSE=true ./grab-song.sh io.github.Pithos
 VERBOSE=false OUTPUT_DIR=Output2 ./grab-song.sh
 OUTPUT_DIR=OtherOutput ./grab-song.sh
 VERBOSE=true ONELINE=true ./grab-song.sh
