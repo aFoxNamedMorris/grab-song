@@ -143,6 +143,12 @@ fi
       if grep -q "mpris:artUrl:" $SONG_METADATA; then
 
         SONG_ART="$(cat $SONG_METADATA | grep "mpris:artUrl:" | sed 's/mpris:artUrl: //' | sed "s/%20/ /g")"
+
+        # Working around the broken image urls that spotify gives mpris
+        if [ $PLAYER_SELECTION == "spotify" ]; then
+          SONG_ART=$(echo "$SONG_ART" | sed "s/open.spotify.com/i.scdn.co/g")
+        fi
+
         convert "$SONG_ART" -resize 500x500! $OUTPUT_DIR/AlbumArt.jpg &>/dev/null
 
       else
