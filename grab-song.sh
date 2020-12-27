@@ -6,7 +6,7 @@ stty -echo
 generate_settings()
 {
   printf "verbose=$VERBOSE\n" >> $SETTINGS_FILE
-  if [ -z "$PLAYER_SELECTION" ]; then break; else printf "last-used-player=$PLAYER_SELECTION\n" >> $SETTINGS_FILE; fi
+  if [ -z "$PLAYER_SELECTION" ]; then return; else printf "last-used-player=$PLAYER_SELECTION\n" >> $SETTINGS_FILE; fi
   printf "output-directory=$OUTPUT_DIR\n" >> $SETTINGS_FILE
   printf "oneline=$ONELINE\n" >> $SETTINGS_FILE
   printf 'oneliner-format= $a: $t - $i \n' >> $SETTINGS_FILE
@@ -31,7 +31,7 @@ save_and_quit()
   if $RM_OUTPUT; then
     rm -r $OUTPUT_DIR
   fi
-  kill $(jobs -p)
+  kill "$(jobs -p)"
   stty echo
   tput cnorm
   reset
@@ -145,15 +145,15 @@ fi
         SONG_ART="$(cat $SONG_METADATA | grep "mpris:artUrl:" | sed 's/mpris:artUrl: //' | sed "s/%20/ /g")"
 
         # Working around the broken image urls that spotify gives mpris
-        if [ $PLAYER_SELECTION == "spotify" ]; then
+        if [ $PLAYER_SELECTION = "spotify" ]; then
           SONG_ART=$(echo "$SONG_ART" | sed "s/open.spotify.com/i.scdn.co/g")
         fi
 
-        convert "$SONG_ART" -resize 500x500! $OUTPUT_DIR/AlbumArt.jpg &>/dev/null
+        convert "$SONG_ART" -resize 500x500! $OUTPUT_DIR/AlbumArt.jpg >/dev/null
 
       else
 
-        convert Images/NoArt.* -resize 500x500! $OUTPUT_DIR/AlbumArt.jpg &>/dev/null
+        convert Images/NoArt.* -resize 500x500! $OUTPUT_DIR/AlbumArt.jpg >/dev/null
 
       fi
       # Edit the junk out of the MPRIS data.
@@ -161,9 +161,9 @@ fi
       SONG_ARTIST_VAR="$(cat $SONG_METADATA | grep "xesam:artist:" | sed 's/.*artist: //')"
       SONG_ALBUM_VAR="$(cat $SONG_METADATA | grep "xesam:album:" | sed 's/.*album: //')"
 
-      t="$SONG_TITLE_VAR"
-      a="$SONG_ARTIST_VAR"
-      i="$SONG_ALBUM_VAR"
+      export t="$SONG_TITLE_VAR"
+      export a="$SONG_ARTIST_VAR"
+      export i="$SONG_ALBUM_VAR"
 
       if [ "$ONELINE" = "false" ]; then
         # Save the title, artist, and album data as individual text files.
