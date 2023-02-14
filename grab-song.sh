@@ -144,7 +144,7 @@ fi
       # If no album art is found, use generic image instead.
       if grep -q "mpris:artUrl:" $SONG_METADATA; then
 
-        SONG_ART="$(cat $SONG_METADATA | grep "mpris:artUrl:" | sed 's/mpris:artUrl: //' | sed "s/%20/ /g")"
+        SONG_ART="$(cat $SONG_METADATA | grep "mpris:artUrl:" | sed 's/mpris:artUrl: //' | sed 's|file://||g' | ./)"
 
         # Working around the broken image urls that spotify gives mpris
         if [ $PLAYER_SELECTION = "spotify" ]; then
