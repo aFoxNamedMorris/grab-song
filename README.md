@@ -59,14 +59,6 @@ VERBOSE=true ONELINE=true ONELINER_FORMAT=' $t - $a - $i ' ./grab-song.sh
 RM_OUTPUT=true ./grab-song.sh
 ```
 
-A utility is included which will list the available players' arguments, so you don't have to guess. It can also be paired with the 'watch -t' command to give a real(ish)-time update, so as to avoid having to rerun the utility each time a new media player is started.
-
-### Usages:
-```
-./check-media-players.sh
-watch -t ./check-media-players.sh
-```
-
 ### Setting up OBS:
 In OBS, add the necessary text and/or image sources, and point them to their respective files in the 'Output' subdirectory. OBS will automatically reload the sources each time grab-song.sh updates them.
 
