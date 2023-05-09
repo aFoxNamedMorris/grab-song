@@ -1,3 +1,5 @@
 Config/
 Output/
 Temp/
+.vscode/
+launch.json
