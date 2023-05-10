@@ -65,13 +65,6 @@ list_media_players()
   qdbus org.mpris.MediaPlayer2.* | grep "org.mpris.MediaPlayer2." | sed 's/org.mpris.MediaPlayer2.//'
 }
 
-if [ -z "$PLAYER_SELECTION" ]; then
-  stty echo
-  tput cnorm
-  printf "Please specify a player and try again\n\n%s\n\n" "$(list_media_players)"
-  exit
-fi
-
   OUTPUT_DIR=${OUTPUT_DIR-$(cat < "$SETTINGS_FILE" | grep "output-directory=" | sed 's/output-directory=//')}
 
   ONELINE=${ONELINE-$(cat < "$SETTINGS_FILE" | grep "oneline=" | sed 's/oneline=//')}
@@ -105,6 +98,15 @@ fi
   if [ "$TEST_RM_OUTPUT" = "" ]; then
     printf "rm-output=%s\n" "$RM_OUTPUT" >> "$SETTINGS_FILE"
   fi
+
+# If no media player is specified, throw an error and list currently available media players.
+if [ "$(qdbus org.mpris.MediaPlayer2."$PLAYER_SELECTION" /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Metadata)" = "" ]; then
+  stty echo
+  tput cnorm
+  printf "Please specify a media player and try again.\n\nAvailable media players are listed below:\n\n%s\n\n" "$(list_media_players)"
+  printf "If the media player is listed but does not work\nplease make sure that your media is playing and\nthat MPRIS is supported by and enabled in your\nmedia player of choice.\n\n"
+  exit
+fi
 
   # Clean up validation variables
   unset TEST_VERBOSE
