@@ -59,7 +59,7 @@ VERBOSE=${VERBOSE-$(cat < "$SETTINGS_FILE" | grep "verbose=" | sed 's/verbose=//
 
 PLAYER_SELECTION=${1-$(cat < "$SETTINGS_FILE" | grep "last-used-player=" | sed 's/last-used-player=//')}
 
-# Check if there's no player selection
+# Function for listing compatible media players. (TODO: Create interactive menus!)
 list_media_players()
 {
   qdbus org.mpris.MediaPlayer2.* | grep "org.mpris.MediaPlayer2." | sed 's/org.mpris.MediaPlayer2.//'
