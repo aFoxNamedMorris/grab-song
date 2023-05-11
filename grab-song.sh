@@ -11,7 +11,7 @@ generate_settings()
   if [ -z "$PLAYER_SELECTION" ]; then return; else printf "last-used-player=%s\n" "$PLAYER_SELECTION"; fi
   printf "output-directory=%s\n" "$OUTPUT_DIR"
   printf "oneline=%s\n" "$ONELINE"
-  printf "oneliner-format= \$a: \$t - \$i \n"
+  printf "oneliner-format=%s\n" "$ONELINER_FORMAT"
   printf "rm-output=%s\n" "$RM_OUTPUT" 
 } >> "$SETTINGS_FILE"
 
@@ -117,7 +117,7 @@ fi
   unset TEST_RM_OUTPUT
 
   # Set defaults if settings aren't present.
-  if [ "$ONELINER_FORMAT" = "" ]; then ONELINER_FORMAT=" $a: $t - $i "; fi
+  if [ "$ONELINER_FORMAT" = "" ]; then ONELINER_FORMAT=" \$a: \$t - \$i "; fi
   if [ "$FIRSTRUN" = "" ]; then FIRSTRUN='true'; fi
   if [ "$VERBOSE" = "" ]; then VERBOSE='true'; fi
   if [ "$ONELINE" = "" ]; then ONELINE='false'; fi
@@ -179,7 +179,7 @@ fi
         printf "%s" "$SONG_ALBUM_VAR" > "$SONG_ALBUM"
       else
         # Same as above, except for oneline mode.
-        printf "%s\n" "$(eval "printf \"$ONELINER_FORMAT\"")" > "$SONG_ONELINER"
+        printf "%s\n" "$(eval printf "%s' '" "$ONELINER_FORMAT")" > "$SONG_ONELINER"
       fi
 
     fi
@@ -208,7 +208,7 @@ fi
 
       else
 
-        printf "%s\n" "$(eval "printf \"$ONELINER_FORMAT\"")"
+        printf "%s\n" "$(eval printf "%s' '" "$ONELINER_FORMAT")"
 
       fi
 
