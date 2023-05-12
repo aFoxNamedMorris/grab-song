@@ -1,5 +1,4 @@
 Config/
 Output/
-Temp/
+Logs
 .vscode/
-launch.json
