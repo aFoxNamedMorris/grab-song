@@ -12,6 +12,8 @@ generate_settings()
   printf "output-directory=%s\n" "$OUTPUT_DIR"
   printf "oneline=%s\n" "$ONELINE"
   printf "oneliner-format=%s\n" "$ONELINER_FORMAT"
+  printf "logging=%s\n" "$LOGGING"
+  printf "log-directory=%s\n" "$LOG_DIR"
   printf "rm-output=%s\n" "$RM_OUTPUT" 
 } >> "$SETTINGS_FILE"
 
@@ -23,6 +25,8 @@ save()
   sed -i "/output-directory=/ c\output-directory=$OUTPUT_DIR" "$SETTINGS_FILE"
   sed -i "/oneline=/ c\oneline=$ONELINE" "$SETTINGS_FILE"
   sed -i "/oneliner-format=/ c\oneliner-format=$ONELINER_FORMAT" "$SETTINGS_FILE"
+  sed -i "/logging=/ c\logging=$LOGGING" "$SETTINGS_FILE"
+  sed -i "/log-directory=/ c\log-directory=$LOG_DIR" "$SETTINGS_FILE"
   sed -i "/rm-output=/ c\rm-output=$RM_OUTPUT" "$SETTINGS_FILE"
 }
 
@@ -70,6 +74,9 @@ list_media_players()
   ONELINE=${ONELINE-$(cat < "$SETTINGS_FILE" | grep "oneline=" | sed 's/oneline=//')}
   ONELINER_FORMAT=${ONELINER_FORMAT-$(cat < "$SETTINGS_FILE" | grep "oneliner-format=" | sed 's/oneliner-format=//')}
 
+  LOGGING=${LOGGING-$(cat < "$SETTINGS_FILE" | grep "logging=" | sed 's/logging=//')}
+  LOG_DIR=${LOG_DIR-$(cat < "$SETTINGS_FILE" | grep "log-directory=" | sed 's/log-directory=//')}
+
   RM_OUTPUT=${RM_OUTPUT-$(cat < "$SETTINGS_FILE" | grep "rm-output=" | sed 's/rm-output=//')}
 
   # Test to make sure everything is present in the settings file.
@@ -78,6 +85,8 @@ list_media_players()
   TEST_OUTPUT_DIR=$(cat < "$SETTINGS_FILE" | grep "output-directory=")
   TEST_ONELINE=$(cat < "$SETTINGS_FILE" | grep "oneline=")
   TEST_ONELINER_FORMAT=$(cat < "$SETTINGS_FILE" | grep "oneliner-format=")
+  TEST_LOGGING=$(cat < "$SETTINGS_FILE" | grep "logging=")
+  TEST_LOG_DIR=$(cat < "$SETTINGS_FILE" | grep "log-directory=")
   TEST_RM_OUTPUT=$(cat < "$SETTINGS_FILE" | grep "rm-output=")
 
   if [ "$TEST_VERBOSE" = "" ]; then
@@ -94,6 +103,12 @@ list_media_players()
   fi
   if [ "$TEST_ONELINER_FORMAT" = "" ]; then
     printf "oneliner-format=%s\n" "$ONELINER_FORMAT" >> "$SETTINGS_FILE"
+  fi
+  if [ "$TEST_LOGGING" = "" ]; then
+    printf "logging=%s\n" "$LOGGING" >> "$SETTINGS_FILE"
+  fi
+  if [ "$TEST_LOG_DIR" = "" ]; then
+    printf "log-directory=%s\n" "$LOG_DIR" >> "$SETTINGS_FILE"
   fi
   if [ "$TEST_RM_OUTPUT" = "" ]; then
     printf "rm-output=%s\n" "$RM_OUTPUT" >> "$SETTINGS_FILE"
@@ -114,6 +129,8 @@ fi
   unset TEST_OUTPUT_DIR
   unset TEST_ONELINE
   unset TEST_ONELINER_FORMAT
+  unset TEST_LOGGING
+  unset TEST_LOG_DIR
   unset TEST_RM_OUTPUT
 
   # Set defaults if settings aren't present.
@@ -122,6 +139,7 @@ fi
   if [ "$VERBOSE" = "" ]; then VERBOSE='true'; fi
   if [ "$ONELINE" = "" ]; then ONELINE='false'; fi
   if [ "$PLAYER_SELECTION" = "" ]; then PLAYER_SELECTION=''; fi
+  if [ "$LOGGING" = "" ]; then LOGGING='false'; fi
   if [ "$RM_OUTPUT" = "" ]; then RM_OUTPUT='false'; fi
 
   SONG_METADATA="$TMP_DIR/SongMetaData.txt"
@@ -129,6 +147,9 @@ fi
   SONG_ARTIST="$OUTPUT_DIR/SongArtist.txt"
   SONG_ALBUM="$OUTPUT_DIR/SongAlbum.txt"
   SONG_ONELINER="$OUTPUT_DIR/SongInfo.txt"
+  LOG_DIR="Logs"
+  LOG_FILE="$LOG_DIR/$(date +'%F_%H-%M-%S.log')"
+   if [ "$LOGGING" = "true" ]; then mkdir -p $LOG_DIR; fi
 
   # Set up the locations of the output files.
   mkdir -p "$OUTPUT_DIR"
@@ -179,11 +200,15 @@ fi
         printf "%s" "$SONG_ALBUM_VAR" > "$SONG_ALBUM"
       else
         # Same as above, except for oneline mode.
-        printf "%s\n" "$(eval printf "%s' '" "$ONELINER_FORMAT")" > "$SONG_ONELINER"
+        printf "%s" "$(eval printf "%s' '" "$ONELINER_FORMAT")" > "$SONG_ONELINER"
       fi
-
+      
+      # Logging.
+      if [ "$LOGGING" = "true" ]; then
+          date +"[%H:%M:%S] $(printf "%s" "$(eval printf "%s' '" "$ONELINER_FORMAT")")" >> "$LOG_FILE"
+      fi
     fi
-
+      
     # Verbosity.
     if [ "$VERBOSE" = "true" ]; then
 
@@ -208,15 +233,15 @@ fi
 
       else
 
-        printf "%s\n" "$(eval printf "%s' '" "$ONELINER_FORMAT")"
+       printf "%s\n" "$(eval printf "%s' '" "$ONELINER_FORMAT")"
 
       fi
 
-      printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
+    printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' =
 
     fi
 
-    sleep 1
+    # sleep 1
 
     # END MAIN LOOP
 
