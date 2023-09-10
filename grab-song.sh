@@ -40,6 +40,24 @@ save_and_quit()
   exit
 }
 
+# Function for listing compatible media players. (TODO: Create interactive menus!)
+list_media_players()
+{
+  qdbus org.mpris.MediaPlayer2.* | grep "org.mpris.MediaPlayer2." | sed 's/org.mpris.MediaPlayer2.//'
+}
+
+# Function for fetching the current track's metadata from the selected media player.
+get_metadata()
+{
+  qdbus org.mpris.MediaPlayer2."$PLAYER_SELECTION" /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Metadata
+}
+
+# Function for simplifying the use of ImageMagic's "convert" command.
+save_art()
+{
+  convert "$1" -resize 500x500! "$OUTPUT_DIR/AlbumArt.jpg" >/dev/null
+}
+
 if [ -z "$CONFIG_DIR" ]; then CONFIG_DIR=${CONFIG_DIR-Config}; fi
 if [ -z "$TMP_DIR" ]; then TMP_DIR=$(mktemp -d /tmp/grab-song.XXXXXXXXXXX); fi
 if [ "$OUTPUT_DIR" = "" ]; then OUTPUT_DIR='Output'; fi
@@ -58,12 +76,6 @@ fi
 VERBOSE=${VERBOSE-$(cat < "$SETTINGS_FILE" | grep "verbose=" | sed 's/verbose=//')}
 
 PLAYER_SELECTION=${1-$(cat < "$SETTINGS_FILE" | grep "last-used-player=" | sed 's/last-used-player=//')}
-
-# Function for listing compatible media players. (TODO: Create interactive menus!)
-list_media_players()
-{
-  qdbus org.mpris.MediaPlayer2.* | grep "org.mpris.MediaPlayer2." | sed 's/org.mpris.MediaPlayer2.//'
-}
 
   OUTPUT_DIR=${OUTPUT_DIR-$(cat < "$SETTINGS_FILE" | grep "output-directory=" | sed 's/output-directory=//')}
 
@@ -100,7 +112,7 @@ list_media_players()
   fi
 
 # If no media player is specified, throw an error and list currently available media players.
-if [ "$(qdbus org.mpris.MediaPlayer2."$PLAYER_SELECTION" /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Metadata)" = "" ]; then
+if [ "$(get_metadata)" = "" ]; then
   stty echo
   tput cnorm
   printf "Please specify a media player and try again.\n\nAvailable media players are listed below:\n\n%s\n\n" "$(list_media_players)"
@@ -142,9 +154,9 @@ fi
   while true; do
 
     # Check for MPRIS data update.
-    if [ "$(qdbus org.mpris.MediaPlayer2."$PLAYER_SELECTION" /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Metadata)" != "$(cat "$SONG_METADATA")" ]; then
+    if [ "$(get_metadata)" != "$(cat "$SONG_METADATA")" ]; then
 
-      qdbus org.mpris.MediaPlayer2."$PLAYER_SELECTION" /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Metadata > "$SONG_METADATA"
+      get_metadata > "$SONG_METADATA"
 
       # If no album art is found, use generic image instead.
       if grep -q "mpris:artUrl:" "$SONG_METADATA"; then
@@ -156,11 +168,11 @@ fi
           SONG_ART=$(echo "$SONG_ART" | sed "s/open.spotify.com/i.scdn.co/g")
         fi
 
-        convert "$SONG_ART" -resize 500x500! "$OUTPUT_DIR/AlbumArt.jpg" >/dev/null
+        save_art "$SONG_ART"
 
       else
 
-        convert Images/NoArt.* -resize 500x500! "$OUTPUT_DIR/AlbumArt.jpg" >/dev/null
+        save_art "Images/NoArt.*"
 
       fi
       # Edit the junk out of the MPRIS data.
@@ -208,7 +220,7 @@ fi
 
       else
 
-        printf "%s\n" "$(eval printf "%s' '" "$ONELINER_FORMAT")"
+        printf "%s\n" "$(eval printf "%s' '" "$ONELINER_FORMAT")" 
 
       fi
 
@@ -216,7 +228,7 @@ fi
 
     fi
 
-    sleep 1
+    # sleep 1
 
     # END MAIN LOOP
 
