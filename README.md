@@ -71,3 +71,8 @@ If you find a bug, something is broken, or you want to suggest a new feature or 
 
 or here, in the 'bugs' or 'suggestions' room, respectively:
 <https://discord.gg/0ygznlvzvNXXY1Qt>
+
+If you would like to support me financially, feel free to donate to using the following:
+<https://ko-fi.com/cybrrwytch>
+
+<https://liberapay.com/CybrrWytch/>
